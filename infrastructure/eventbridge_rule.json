@@ -1,0 +1,47 @@
+{
+  "Comment": "EventBridge rule that triggers the CostRadar Lambda daily at 08:00 UTC. Deploy with: aws events put-rule --cli-input-json file://eventbridge_rule.json",
+  "Name": "costradar-daily-detection",
+  "ScheduleExpression": "cron(0 8 * * ? *)",
+  "State": "ENABLED",
+  "Description": "Triggers CostRadar anomaly detection, forecasting, and rightsizing evaluation every day at 08:00 UTC",
+  "Targets": [
+    {
+      "Id": "costradar-lambda-target",
+      "Arn": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:costradar-backend",
+      "Input": "{\"source\": \"aws.events\", \"detail-type\": \"Scheduled Event\", \"detail\": {}}"
+    }
+  ],
+  "IAMRole": {
+    "Comment": "Create this role and attach it to the rule so EventBridge can invoke Lambda",
+    "RoleName": "costradar-eventbridge-role",
+    "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "scheduler.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    },
+    "InlinePolicy": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "lambda:InvokeFunction",
+          "Resource": "arn:aws:lambda:us-east-1:ACCOUNT_ID:function:costradar-backend"
+        }
+      ]
+    }
+  },
+  "RequiredLambdaPermission": {
+    "Comment": "Add this resource-based policy to the Lambda so EventBridge can invoke it",
+    "StatementId": "allow-eventbridge-costradar",
+    "Action": "lambda:InvokeFunction",
+    "Principal": "events.amazonaws.com",
+    "SourceArn": "arn:aws:events:us-east-1:ACCOUNT_ID:rule/costradar-daily-detection"
+  }
+}

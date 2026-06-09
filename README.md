@@ -12,7 +12,7 @@ pinned: false
 AWS spend anomaly detection and rightsizing intelligence platform. Pulls live billing data from Cost Explorer and CloudWatch, runs two independent anomaly detection models, forecasts 30-day costs with accuracy metrics, tracks spend against a monthly budget, and recommends EC2 rightsizing — all served through a FastAPI backend and a React dashboard.
 
 Built by [SKMMT](http://skmmt.rootexception.com/).
-Check the demo [here](https://sheikhkmmtahmid-cost-radar.hf.space/)
+Check the demo [here](https://sheikhkmmtahmid-cost-radar.hf.space/).
 
 ---
 
